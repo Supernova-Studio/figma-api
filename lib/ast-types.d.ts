@@ -495,6 +495,8 @@ export interface FRAME {
     exportSettings: ExportSetting[];
     /** How this node blends with nodes behind it in the scene (see blend mode section for more details) */
     blendMode: BlendMode;
+    /** default: [] An array of fill paints applied to the node */
+    fills: Paint[];
     /** default: false Keep height and width constrained to same ratio */
     preserveRatio: boolean;
     /** Horizontal and vertical layout constraints for node */
