@@ -316,6 +316,8 @@ type EffectShadow_ = {
 
     /** How far the shadow is projected in the x and y directions */
     offset: Vector,
+
+    spread: Vector,
 };
 
 export type EffectShadow = {
@@ -614,6 +616,9 @@ export interface FRAME {
     isMask: boolean;
     /** default: false Does this mask ignore fill style (like gradients) and effects? */
     isMaskOutline: boolean;
+
+    /** A mapping of a StyleType to style ID (see Style) of styles present on this node. The style ID can be used to look up more information about the style in the top-level styles field. */
+    styles?: StylesMap;
 }
 
 /** A logical grouping of nodes */
