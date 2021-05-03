@@ -317,7 +317,7 @@ type EffectShadow_ = {
     /** How far the shadow is projected in the x and y directions */
     offset: Vector,
 
-    spread: Vector,
+    spread: number,
 };
 
 export type EffectShadow = {
@@ -552,6 +552,7 @@ export interface Style {
     key: string,
     /** The name of the style */
     name: string,
+    description?: string,
     /** The type of style */
     style_type: StyleType;
 }

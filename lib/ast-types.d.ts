@@ -276,7 +276,7 @@ declare type EffectShadow_ = {
     blendMode: BlendMode;
     /** How far the shadow is projected in the x and y directions */
     offset: Vector;
-    spread: Vector;
+    spread: number;
 };
 export declare type EffectShadow = {
     type: EffectType.DROP_SHADOW | EffectType.INNER_SHADOW;
@@ -462,6 +462,7 @@ export interface Style {
     key: string;
     /** The name of the style */
     name: string;
+    description?: string;
     /** The type of style */
     style_type: StyleType;
 }
