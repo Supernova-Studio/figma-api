@@ -149,7 +149,7 @@ export interface StyleMetadata {
 export interface GetFileResult {
     name: string,
     lastModified: string,
-    thumbnailURL: string,
+    thumbnailUrl: string,
     version: string,
     document: Node<'DOCUMENT'>,
     components: { [nodeId: string]: Component },
@@ -161,7 +161,7 @@ export interface GetFileResult {
 export interface GetFileNodesResult {
     name: string,
     lastModified: string,
-    thumbnailURL: string,
+    thumbnailUrl: string,
     version: string,
     err?: string,
     nodes: {
