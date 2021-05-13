@@ -59,7 +59,7 @@ client_meta: Vector | FrameOffset,
 comment_id?: string): Promise<PostCommentResult>;
 export declare function deleteCommentsApi(this: ApiClass, fileKey: string, comment_id: string): Promise<DeleteCommentsResult>;
 export declare function getUserMeApi(this: ApiClass): Promise<GetUserMeResult>;
-export declare function getVersionsApi(this: ApiClass, fileKey: string, before?: string, pageSize?: number): Promise<GetVersionsResult>;
+export declare function getVersionsApi(this: ApiClass, fileKey: string, after?: string, before?: string, pageSize?: number): Promise<GetVersionsResult>;
 export declare function getTeamProjectsApi(this: ApiClass, team_id: string): Promise<GetTeamProjectsResult>;
 export declare function getProjectFilesApi(this: ApiClass, project_id: string): Promise<GetProjectFilesResult>;
 /** Get a paginated list of published components within a team library */
