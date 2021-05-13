@@ -149,8 +149,9 @@ export function getUserMeApi(this: ApiClass): Promise<GetUserMeResult> {
 // VERSION HISTORY
 // -----------------------------------------------------------------
 
-export function getVersionsApi(this: ApiClass, fileKey: string): Promise<GetVersionsResult> {
-    return this.request(`${API_DOMAIN}/${API_VER}/files/${fileKey}/versions`);
+export function getVersionsApi(this: ApiClass, fileKey: string, before?: string, pageSize: number = 30): Promise<GetVersionsResult> {
+    const queryParams = toQueryParams({ before, page_size: pageSize });
+    return this.request(`${API_DOMAIN}/${API_VER}/files/${fileKey}/versions?${queryParams}`);
 }
 
 // PROJECTS
