@@ -561,6 +561,7 @@ export interface Style {
 export interface DOCUMENT {
     /** An array of canvases attached to the document */
     children: Node[];
+    pluginData: { [pluginId: string]: any };
 }
 
 /** Represents a single page */
