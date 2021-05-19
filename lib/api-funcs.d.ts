@@ -20,6 +20,8 @@ fileKey: string, opts?: {
     depth?: number;
     /** Set to "paths" to export vector data */
     geometry?: 'paths';
+    /** A comma separated list of plugin IDs and/or the string "shared". */
+    plugin_data?: string;
 }): Promise<GetFileResult>;
 export declare function getFileNodesApi(this: ApiClass, 
 /**

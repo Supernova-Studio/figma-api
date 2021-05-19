@@ -50,6 +50,8 @@ export function getFileApi(this: ApiClass,
         depth?: number,
         /** Set to "paths" to export vector data */
         geometry?: 'paths',
+        /** A comma separated list of plugin IDs and/or the string "shared". */
+        plugin_data?: string
     }
 ): Promise<GetFileResult> {
     const queryParams = toQueryParams({ ...opts, ids: opts && opts.ids && opts.ids.join(',') });
