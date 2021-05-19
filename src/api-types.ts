@@ -155,6 +155,7 @@ export interface GetFileResult {
     components: { [nodeId: string]: Component },
     schemaVersion: number,
     styles: { [styleName: string]: Style },
+    pluginData: { [pluginId: string]: any },
 }
 
 /** The `name`, `lastModified`, `thumbnailURL`, and `version` attributes are all metadata of the specified file. */
