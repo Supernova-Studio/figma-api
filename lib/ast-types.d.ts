@@ -501,6 +501,26 @@ export interface FRAME {
     blendMode: BlendMode;
     /** default: [] An array of fill paints applied to the node */
     fills: Paint[];
+    /** default: [] An array of stroke paints applied to the node */
+    strokes: Paint[];
+    /** The weight of strokes on the node */
+    strokeWeight: number;
+    strokeCap?: StrokeCap;
+    /** Where stroke is drawn relative to the vector outline as a string enum
+    "INSIDE": draw stroke inside the shape boundary
+    "OUTSIDE": draw stroke outside the shape boundary
+    "CENTER": draw stroke centered along the shape boundary */
+    strokeAlign: StrokeAlign;
+    /** Radius of each corner of the rectangle */
+    cornerRadius: number;
+    /** Array of length 4 of the radius of each corner of the rectangle, starting in the top left and proceeding clockwise */
+    rectangleCornerRadii: [number, number, number, number];
+    /** A string enum with value of "MITER", "BEVEL", or "ROUND", describing how corners in vector paths are rendered. */
+    strokeJoin?: StrokeJoin;
+    /** An array of floating point numbers describing the pattern of dash length and gap lengths that the vector path follows. For example a value of [1, 2] indicates that the path has a dash of length 1 followed by a gap of length 2, repeated. */
+    strokeDashes?: number[];
+    /** Only valid if strokeJoin is "MITER". The corner angle, in degrees, below which strokeJoin will be set to "BEVEL" to avoid super sharp corners. By default this is 28.96 degrees. */
+    strokeMiterAngle?: number;
     /** default: false Keep height and width constrained to same ratio */
     preserveRatio: boolean;
     /** Horizontal and vertical layout constraints for node */
