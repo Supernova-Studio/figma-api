@@ -492,7 +492,7 @@ export type TypeStyle = {
     /** Text casing applied to the node, default is the `ORIGINAL` casing */
     textCase?: TextCase,
     /** Dimensions along which text will auto resize, default is that the text does not auto-resize. */
-    textAutoResize?: 'NONE' | 'HEIGHT' | "WIDTH_AND_HEIGHT"
+    textAutoResize?: 'NONE' | 'HEIGHT' | 'WIDTH_AND_HEIGHT'
     /** Text decoration applied to the node, default is `NONE` */
     textDecoration?: TextDecoration,
     /** Horizontal text alignment as string enum */
