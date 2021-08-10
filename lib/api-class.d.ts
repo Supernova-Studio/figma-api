@@ -1,4 +1,4 @@
-import { getFileApi, getFileNodesApi, getImageApi, getImageFillsApi, getCommentsApi, postCommentsApi, deleteCommentsApi, getUserMeApi, getVersionsApi, getTeamProjectsApi, getProjectFilesApi, getTeamComponentsApi, getFileComponentsApi, getComponentApi, getTeamComponentSetsApi, getFileComponentSetsApi, getComponentSetApi, getTeamStylesApi, getFileStylesApi, getStyleApi } from './api-funcs';
+import { getFileApi, getFileNodesApi, getImageApi, getImageFillsApi, getCommentsApi, postCommentsApi, deleteCommentsApi, getUserMeApi, getVersionsApi, getTeamProjectsApi, getProjectFilesApi, getTeamComponentsApi, getFileComponentsApi, getComponentApi, getTeamComponentSetsApi, getFileComponentSetsApi, getComponentSetApi, getTeamStylesApi, getFileStylesApi, getStyleApi, headFileApi } from './api-funcs';
 import { ApiRequestMethod } from './utils';
 export declare class Api {
     personalAccessToken?: string;
@@ -12,6 +12,7 @@ export declare class Api {
         [x: string]: string;
     }) => void;
     request: ApiRequestMethod;
+    headFile: typeof headFileApi;
     getFile: typeof getFileApi;
     getFileNodes: typeof getFileNodesApi;
     getImage: typeof getImageApi;

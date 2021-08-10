@@ -1,5 +1,5 @@
-import { Vector, FrameOffset } from "./ast-types";
-import { GetFileResult, GetFileNodesResult, GetImageResult, GetImageFillsResult, GetCommentsResult, PostCommentResult, DeleteCommentsResult, GetUserMeResult, GetVersionsResult, GetTeamProjectsResult, GetProjectFilesResult, GetTeamComponentsResult, GetFileComponentsResult, GetComponentResult, GetTeamComponentSetsResult, GetFileComponentSetsResult, GetComponentSetResult, GetTeamStylesResult, GetFileStylesResult, GetStyleResult } from "./api-types";
+import { DeleteCommentsResult, GetCommentsResult, GetComponentResult, GetComponentSetResult, GetFileComponentSetsResult, GetFileComponentsResult, GetFileNodesResult, GetFileResult, GetFileStylesResult, GetImageFillsResult, GetImageResult, GetProjectFilesResult, GetStyleResult, GetTeamComponentSetsResult, GetTeamComponentsResult, GetTeamProjectsResult, GetTeamStylesResult, GetUserMeResult, GetVersionsResult, PostCommentResult } from "./api-types";
+import { FrameOffset, Vector } from "./ast-types";
 import { ApiRequestMethod } from "./utils";
 declare type ApiClass = {
     request: ApiRequestMethod;
@@ -23,6 +23,17 @@ fileKey: string, opts?: {
     /** A comma separated list of plugin IDs and/or the string "shared". */
     plugin_data?: string;
 }): Promise<GetFileResult>;
+export declare function headFileApi(this: ApiClass, 
+/**
+ * File to export JSON from
+ *
+ * Can be found in url to file, eg:
+ * https://www.figma.com/file/FILE_KEY/FILE_NAME
+ */
+fileKey: string, opts?: {
+    /** A specific version ID to get. Omitting this will get the current version of the file */
+    version?: string;
+}): Promise<any>;
 export declare function getFileNodesApi(this: ApiClass, 
 /**
  * File to export JSON from

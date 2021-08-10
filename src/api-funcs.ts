@@ -1,29 +1,9 @@
-import { API_DOMAIN, API_VER } from "./config";
-import { Vector, FrameOffset } from "./ast-types";
 import {
-    GetFileResult,
-    GetFileNodesResult,
-    GetImageResult,
-    GetImageFillsResult,
-    GetCommentsResult,
-    PostCommentResult,
-    DeleteCommentsResult,
-    GetUserMeResult,
-    GetVersionsResult,
-    GetTeamProjectsResult,
-    GetProjectFilesResult,
-    GetTeamComponentsResult,
-    GetFileComponentsResult,
-    GetComponentResult,
-    GetTeamComponentSetsResult,
-    GetFileComponentSetsResult,
-    GetComponentSetResult,
-    GetTeamStylesResult,
-    GetFileStylesResult,
-    GetStyleResult,
-    StyleMetadata,
-    ComponentMetadata,
+    DeleteCommentsResult, GetCommentsResult, GetComponentResult, GetComponentSetResult, GetFileComponentSetsResult, GetFileComponentsResult, GetFileNodesResult, GetFileResult, GetFileStylesResult, GetImageFillsResult, GetImageResult, GetProjectFilesResult, GetStyleResult, GetTeamComponentSetsResult, GetTeamComponentsResult, GetTeamProjectsResult, GetTeamStylesResult, GetUserMeResult,
+    GetVersionsResult, PostCommentResult
 } from "./api-types";
+import { FrameOffset, Vector } from "./ast-types";
+import { API_DOMAIN, API_VER } from "./config";
 import { ApiRequestMethod, toQueryParams } from "./utils";
 
 type ApiClass = {
@@ -56,6 +36,26 @@ export function getFileApi(this: ApiClass,
 ): Promise<GetFileResult> {
     const queryParams = toQueryParams({ ...opts, ids: opts && opts.ids && opts.ids.join(',') });
     return this.request<GetFileResult>(`${API_DOMAIN}/${API_VER}/files/${fileKey}?${queryParams}`);
+}
+
+export function headFileApi(this: ApiClass,
+    /**
+     * File to export JSON from
+     *
+     * Can be found in url to file, eg:
+     * https://www.figma.com/file/FILE_KEY/FILE_NAME
+     */
+    fileKey: string,
+    opts?: {
+        /** A specific version ID to get. Omitting this will get the current version of the file */
+        version?: string,
+        
+    }
+): Promise<any> {
+    const queryParams = toQueryParams(opts);
+    return this.request<any>(`${API_DOMAIN}/${API_VER}/files/${fileKey}?${queryParams}`, {
+        method: 'HEAD', 
+    });
 }
 
 export function getFileNodesApi(this: ApiClass,
