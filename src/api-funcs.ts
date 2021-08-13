@@ -45,7 +45,7 @@ export async function getFileApi(this: ApiClass,
 }
 
 
-export async function getFileApiFull(this: ApiClass,
+export async function getFileFullApi(this: ApiClass,
     /**
      * File to export JSON from
      *

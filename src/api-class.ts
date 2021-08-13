@@ -20,7 +20,7 @@ import {
     getFileStylesApi,
     getStyleApi,
     headFileApi,
-    getFileApiFull
+    getFileFullApi
 } from './api-funcs';
 import axios, { AxiosRequestConfig, Method as AxiosMethod } from 'axios';
 import { toQueryParams, ApiRequestMethod } from './utils';
@@ -44,7 +44,7 @@ export class Api {
 
     appendHeaders = (headers: { [x: string]: string }) => {
         if (this.personalAccessToken) headers['X-Figma-Token'] = this.personalAccessToken;
-        if (this.oAuthToken) headers['Authorization'] =  `Bearer ${this.oAuthToken}`;
+        if (this.oAuthToken) headers['Authorization'] = `Bearer ${this.oAuthToken}`;
     }
 
     request: ApiRequestMethod = async <T>(url: string, opts?: { method: AxiosMethod, data?: string, fullResponse?: boolean }) => {
@@ -69,7 +69,7 @@ export class Api {
 
     headFile = headFileApi;
     getFile = getFileApi;
-    getFileApiFull = getFileApiFull;
+    getFileFull = getFileFullApi;
     getFileNodes = getFileNodesApi;
     getImage = getImageApi;
     getImageFills = getImageFillsApi;

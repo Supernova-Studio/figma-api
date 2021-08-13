@@ -24,7 +24,7 @@ export declare function getFileApi(this: ApiClass,
  * https://www.figma.com/file/FILE_KEY/FILE_NAME
  */
 fileKey: string, opts?: GetFileApiOptions): Promise<GetFileResult>;
-export declare function getFileApiFull(this: ApiClass, 
+export declare function getFileFullApi(this: ApiClass, 
 /**
  * File to export JSON from
  *
