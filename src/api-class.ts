@@ -19,7 +19,8 @@ import {
     getTeamStylesApi,
     getFileStylesApi,
     getStyleApi,
-    headFileApi
+    headFileApi,
+    getFileApiFull
 } from './api-funcs';
 import axios, { AxiosRequestConfig, Method as AxiosMethod } from 'axios';
 import { toQueryParams, ApiRequestMethod } from './utils';
@@ -46,7 +47,7 @@ export class Api {
         if (this.oAuthToken) headers['Authorization'] =  `Bearer ${this.oAuthToken}`;
     }
 
-    request: ApiRequestMethod = async <T>(url: string, opts?: { method: AxiosMethod, data?: string }) => {
+    request: ApiRequestMethod = async <T>(url: string, opts?: { method: AxiosMethod, data?: string, fullResponse?: boolean }) => {
         const headers = {};
         this.appendHeaders(headers);
 
@@ -59,8 +60,8 @@ export class Api {
         const res = await axios(axiosParams);
         if (Math.floor(res.status / 100) !== 2) throw res.statusText;
 
-        if (opts && (opts.method === 'HEAD' || opts.method === 'head')) {
-            return res.headers
+        if (opts && opts.fullResponse) {
+            return res
         } else {
             return res.data;
         }
@@ -68,6 +69,7 @@ export class Api {
 
     headFile = headFileApi;
     getFile = getFileApi;
+    getFileApiFull = getFileApiFull;
     getFileNodes = getFileNodesApi;
     getImage = getImageApi;
     getImageFills = getImageFillsApi;

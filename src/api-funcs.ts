@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import {
     DeleteCommentsResult, GetCommentsResult, GetComponentResult, GetComponentSetResult, GetFileComponentSetsResult, GetFileComponentsResult, GetFileNodesResult, GetFileResult, GetFileStylesResult, GetImageFillsResult, GetImageResult, GetProjectFilesResult, GetStyleResult, GetTeamComponentSetsResult, GetTeamComponentsResult, GetTeamProjectsResult, GetTeamStylesResult, GetUserMeResult,
     GetVersionsResult, PostCommentResult
@@ -13,7 +14,23 @@ type ApiClass = {
 // FIGMA FILES
 // -----------------------------------------------------------------
 
-export function getFileApi(this: ApiClass,
+type GetFileApiOptions = {
+    /** A specific version ID to get. Omitting this will get the current version of the file */
+    version?: string,
+    /** If specified, only a subset of the document will be returned corresponding to the nodes listed, their children, and everything between the root node and the listed nodes */
+    ids?: string[],
+    /** Positive integer representing how deep into the document tree to traverse. For example, setting this to 1 returns only Pages, setting it to 2 returns Pages and all top level objects on each page. Not setting this parameter returns all nodes */
+    depth?: number,
+    /** Set to "paths" to export vector data */
+    geometry?: 'paths',
+    /** A comma separated list of plugin IDs and/or the string "shared". */
+    plugin_data?: string
+}
+
+function getFileApiOptionsToQueryString(opts?: GetFileApiOptions) {
+    return toQueryParams({ ...opts, ids: opts && opts.ids && opts.ids.join(',') });
+}
+export async function getFileApi(this: ApiClass,
     /**
      * File to export JSON from
      *
@@ -21,24 +38,35 @@ export function getFileApi(this: ApiClass,
      * https://www.figma.com/file/FILE_KEY/FILE_NAME
      */
     fileKey: string,
-    opts?: {
-        /** A specific version ID to get. Omitting this will get the current version of the file */
-        version?: string,
-        /** If specified, only a subset of the document will be returned corresponding to the nodes listed, their children, and everything between the root node and the listed nodes */
-        ids?: string[],
-        /** Positive integer representing how deep into the document tree to traverse. For example, setting this to 1 returns only Pages, setting it to 2 returns Pages and all top level objects on each page. Not setting this parameter returns all nodes */
-        depth?: number,
-        /** Set to "paths" to export vector data */
-        geometry?: 'paths',
-        /** A comma separated list of plugin IDs and/or the string "shared". */
-        plugin_data?: string
-    }
+    opts?: GetFileApiOptions
 ): Promise<GetFileResult> {
-    const queryParams = toQueryParams({ ...opts, ids: opts && opts.ids && opts.ids.join(',') });
+    const queryParams = getFileApiOptionsToQueryString(opts);
     return this.request<GetFileResult>(`${API_DOMAIN}/${API_VER}/files/${fileKey}?${queryParams}`);
 }
 
-export function headFileApi(this: ApiClass,
+
+export async function getFileApiFull(this: ApiClass,
+    /**
+     * File to export JSON from
+     *
+     * Can be found in url to file, eg:
+     * https://www.figma.com/file/FILE_KEY/FILE_NAME
+     */
+    fileKey: string,
+    opts?: GetFileApiOptions
+): Promise<{ headers: any, data: GetFileResult }> {
+    const queryParams = getFileApiOptionsToQueryString(opts);
+    const response = await this.request<AxiosResponse<GetFileResult>>(`${API_DOMAIN}/${API_VER}/files/${fileKey}?${queryParams}`, { 
+        method: 'GET', 
+        fullResponse: true
+     });
+    return {
+        data: response.data,
+        headers: response.headers
+    }
+}
+
+export async function headFileApi(this: ApiClass,
     /**
      * File to export JSON from
      *
@@ -49,13 +77,15 @@ export function headFileApi(this: ApiClass,
     opts?: {
         /** A specific version ID to get. Omitting this will get the current version of the file */
         version?: string,
-        
+
     }
 ): Promise<any> {
     const queryParams = toQueryParams(opts);
-    return this.request<any>(`${API_DOMAIN}/${API_VER}/files/${fileKey}?${queryParams}`, {
-        method: 'HEAD', 
+    const response = await this.request<AxiosResponse>(`${API_DOMAIN}/${API_VER}/files/${fileKey}?${queryParams}`, {
+        method: 'HEAD',
+        fullResponse: true
     });
+    return response.headers
 }
 
 export function getFileNodesApi(this: ApiClass,
@@ -87,7 +117,7 @@ export function getImageApi(this: ApiClass,
         /** A number between 0.01 and 4, the image scaling factor */
         scale: number,
         /** A string enum for the image output format */
-        format: 'jpg'|'png'|'svg'|'pdf',
+        format: 'jpg' | 'png' | 'svg' | 'pdf',
         /** Whether to include id attributes for all SVG elements. `Default: false` */
         svg_include_id?: boolean,
         /** Whether to simplify inside/outside strokes and use stroke attribute if possible instead of <mask>. `Default: true` */
@@ -116,7 +146,7 @@ export function postCommentsApi(
     fileKey: string,
     message: string,
     /** The position of where to place the comment. This can either be an absolute canvas position or the relative position within a frame. */
-    client_meta: Vector|FrameOffset,
+    client_meta: Vector | FrameOffset,
     /** (Optional) The comment to reply to, if any. This must be a root comment, that is, you cannot reply to a comment that is a reply itself (a reply has a parent_id). */
     comment_id?: string,
 ): Promise<PostCommentResult> {

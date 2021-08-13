@@ -4,14 +4,7 @@ import { ApiRequestMethod } from "./utils";
 declare type ApiClass = {
     request: ApiRequestMethod;
 };
-export declare function getFileApi(this: ApiClass, 
-/**
- * File to export JSON from
- *
- * Can be found in url to file, eg:
- * https://www.figma.com/file/FILE_KEY/FILE_NAME
- */
-fileKey: string, opts?: {
+declare type GetFileApiOptions = {
     /** A specific version ID to get. Omitting this will get the current version of the file */
     version?: string;
     /** If specified, only a subset of the document will be returned corresponding to the nodes listed, their children, and everything between the root node and the listed nodes */
@@ -22,7 +15,26 @@ fileKey: string, opts?: {
     geometry?: 'paths';
     /** A comma separated list of plugin IDs and/or the string "shared". */
     plugin_data?: string;
-}): Promise<GetFileResult>;
+};
+export declare function getFileApi(this: ApiClass, 
+/**
+ * File to export JSON from
+ *
+ * Can be found in url to file, eg:
+ * https://www.figma.com/file/FILE_KEY/FILE_NAME
+ */
+fileKey: string, opts?: GetFileApiOptions): Promise<GetFileResult>;
+export declare function getFileApiFull(this: ApiClass, 
+/**
+ * File to export JSON from
+ *
+ * Can be found in url to file, eg:
+ * https://www.figma.com/file/FILE_KEY/FILE_NAME
+ */
+fileKey: string, opts?: GetFileApiOptions): Promise<{
+    headers: any;
+    data: GetFileResult;
+}>;
 export declare function headFileApi(this: ApiClass, 
 /**
  * File to export JSON from
