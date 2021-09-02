@@ -1,14 +1,16 @@
 import { AxiosResponse } from "axios";
+import { Stream } from "stream";
 import {
     DeleteCommentsResult, GetCommentsResult, GetComponentResult, GetComponentSetResult, GetFileComponentSetsResult, GetFileComponentsResult, GetFileNodesResult, GetFileResult, GetFileStylesResult, GetImageFillsResult, GetImageResult, GetProjectFilesResult, GetStyleResult, GetTeamComponentSetsResult, GetTeamComponentsResult, GetTeamProjectsResult, GetTeamStylesResult, GetUserMeResult,
     GetVersionsResult, PostCommentResult
 } from "./api-types";
 import { FrameOffset, Vector } from "./ast-types";
 import { API_DOMAIN, API_VER } from "./config";
-import { ApiRequestMethod, toQueryParams } from "./utils";
+import { ApiRequestMethod, ApiStreamRequestMethod, toQueryParams } from "./utils";
 
 type ApiClass = {
     request: ApiRequestMethod
+    streamRequest: ApiStreamRequestMethod
 };
 
 // FIGMA FILES
@@ -42,6 +44,20 @@ export async function getFileApi(this: ApiClass,
 ): Promise<GetFileResult> {
     const queryParams = getFileApiOptionsToQueryString(opts);
     return this.request<GetFileResult>(`${API_DOMAIN}/${API_VER}/files/${fileKey}?${queryParams}`);
+}
+
+export async function getFileStreamApi(this: ApiClass,
+    /**
+     * File to export JSON from
+     *
+     * Can be found in url to file, eg:
+     * https://www.figma.com/file/FILE_KEY/FILE_NAME
+     */
+    fileKey: string,
+    opts?: GetFileApiOptions
+): Promise<Stream> {
+    const queryParams = getFileApiOptionsToQueryString(opts);
+    return this.streamRequest(`${API_DOMAIN}/${API_VER}/files/${fileKey}?${queryParams}`);
 }
 
 
@@ -218,6 +234,9 @@ export function getTeamComponentsApi(
 export function getFileComponentsApi(this: ApiClass, project_id: string): Promise<GetFileComponentsResult> {
     return this.request(`${API_DOMAIN}/${API_VER}/files/${project_id}/components`);
 }
+export function getFileComponentsStreamApi(this: ApiClass, project_id: string): Promise<Stream> {
+    return this.streamRequest(`${API_DOMAIN}/${API_VER}/files/${project_id}/components`);
+}
 
 /** Get metadata on a component by key. */
 export function getComponentApi(this: ApiClass, componentKey: string): Promise<GetComponentResult> {
@@ -264,6 +283,9 @@ export function getTeamStylesApi(
 
 export function getFileStylesApi(this: ApiClass, file_key: string): Promise<GetFileStylesResult> {
     return this.request(`${API_DOMAIN}/${API_VER}/files/${file_key}/styles`);
+}
+export function getFileStylesStreamApi(this: ApiClass, file_key: string): Promise<Stream> {
+    return this.streamRequest(`${API_DOMAIN}/${API_VER}/files/${file_key}/styles`);
 }
 
 export function getStyleApi(

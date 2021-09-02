@@ -1,4 +1,5 @@
 import { AxiosResponse, Method as AxiosMethod } from 'axios';
+import { Stream } from 'stream';
 
 export function toQueryParams(x: any): string {
     if (!x) return '';
@@ -19,3 +20,4 @@ export class ApiError extends Error {
 }
 
 export type ApiRequestMethod = <T>(url: string, opts?: { method: AxiosMethod, data?: string, fullResponse?: boolean }) => Promise<T>;
+export type ApiStreamRequestMethod = (url: string, opts?: { method: AxiosMethod, data?: string }) => Promise<Stream>;

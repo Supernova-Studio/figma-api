@@ -20,10 +20,13 @@ import {
     getFileStylesApi,
     getStyleApi,
     headFileApi,
-    getFileFullApi
+    getFileFullApi,
+    getFileStreamApi,
+    getFileComponentsStreamApi,
+    getFileStylesStreamApi
 } from './api-funcs';
 import axios, { AxiosRequestConfig, Method as AxiosMethod } from 'axios';
-import { toQueryParams, ApiRequestMethod } from './utils';
+import { toQueryParams, ApiRequestMethod, ApiStreamRequestMethod } from './utils';
 
 export class Api {
     personalAccessToken?: string;
@@ -67,10 +70,27 @@ export class Api {
         }
     };
 
+    streamRequest: ApiStreamRequestMethod = async (url: string, opts?: { method: AxiosMethod, data?: string }) => {
+        const headers = {};
+        this.appendHeaders(headers);
+
+        const axiosParams: AxiosRequestConfig = {
+            url,
+            ...opts,
+            headers,
+            responseType: 'stream'
+        };
+
+        const res = await axios(axiosParams);
+        if (Math.floor(res.status / 100) !== 2) throw res.statusText;
+        return res.data;
+    };
+
     headFile = headFileApi;
     getFile = getFileApi;
     getFileFull = getFileFullApi;
     getFileNodes = getFileNodesApi;
+    getFileStream = getFileStreamApi;
     getImage = getImageApi;
     getImageFills = getImageFillsApi;
     getComments = getCommentsApi;
@@ -82,12 +102,14 @@ export class Api {
     getProjectFiles = getProjectFilesApi;
     getTeamComponents = getTeamComponentsApi;
     getFileComponents = getFileComponentsApi;
+    getFileComponentsStream = getFileComponentsStreamApi;
     getComponent = getComponentApi;
     getTeamComponentSets = getTeamComponentSetsApi;
     getFileComponentSets = getFileComponentSetsApi;
     getComponentSet = getComponentSetApi;
     getTeamStyles = getTeamStylesApi;
     getFileStyles = getFileStylesApi;
+    getFileStylesStream = getFileStylesStreamApi;
     getStyle = getStyleApi;
 }
 
