@@ -1,5 +1,4 @@
-/// <reference types="node" />
-import { Stream } from "stream";
+import { AxiosResponse } from "axios";
 import { DeleteCommentsResult, GetCommentsResult, GetComponentResult, GetComponentSetResult, GetFileComponentSetsResult, GetFileComponentsResult, GetFileNodesResult, GetFileResult, GetFileStylesResult, GetImageFillsResult, GetImageResult, GetProjectFilesResult, GetStyleResult, GetTeamComponentSetsResult, GetTeamComponentsResult, GetTeamProjectsResult, GetTeamStylesResult, GetUserMeResult, GetVersionsResult, PostCommentResult } from "./api-types";
 import { FrameOffset, Vector } from "./ast-types";
 import { ApiRequestMethod, ApiStreamRequestMethod } from "./utils";
@@ -34,7 +33,7 @@ export declare function getFileStreamApi(this: ApiClass,
  * Can be found in url to file, eg:
  * https://www.figma.com/file/FILE_KEY/FILE_NAME
  */
-fileKey: string, opts?: GetFileApiOptions): Promise<Stream>;
+fileKey: string, opts?: GetFileApiOptions): Promise<AxiosResponse>;
 export declare function getFileFullApi(this: ApiClass, 
 /**
  * File to export JSON from
@@ -108,7 +107,7 @@ export declare function getTeamComponentsApi(this: ApiClass, team_id: string, op
     };
 }): Promise<GetTeamComponentsResult>;
 export declare function getFileComponentsApi(this: ApiClass, project_id: string): Promise<GetFileComponentsResult>;
-export declare function getFileComponentsStreamApi(this: ApiClass, project_id: string): Promise<Stream>;
+export declare function getFileComponentsStreamApi(this: ApiClass, project_id: string): Promise<AxiosResponse>;
 /** Get metadata on a component by key. */
 export declare function getComponentApi(this: ApiClass, componentKey: string): Promise<GetComponentResult>;
 export declare function getTeamComponentSetsApi(this: ApiClass, team_id: string, opts?: {
@@ -130,7 +129,7 @@ export declare function getTeamStylesApi(this: ApiClass, team_id: string, opts?:
     };
 }): Promise<GetTeamStylesResult>;
 export declare function getFileStylesApi(this: ApiClass, file_key: string): Promise<GetFileStylesResult>;
-export declare function getFileStylesStreamApi(this: ApiClass, file_key: string): Promise<Stream>;
+export declare function getFileStylesStreamApi(this: ApiClass, file_key: string): Promise<AxiosResponse>;
 export declare function getStyleApi(this: ApiClass, 
 /** The unique identifier of the style */
 styleKey: string): Promise<GetStyleResult>;

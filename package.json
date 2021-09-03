@@ -1,6 +1,6 @@
 {
   "name": "figma-api",
-  "version": "1.6.13",
+  "version": "1.6.14",
   "description": "Figma js typed api",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

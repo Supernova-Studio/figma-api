@@ -55,7 +55,7 @@ export async function getFileStreamApi(this: ApiClass,
      */
     fileKey: string,
     opts?: GetFileApiOptions
-): Promise<Stream> {
+): Promise<AxiosResponse> {
     const queryParams = getFileApiOptionsToQueryString(opts);
     return this.streamRequest(`${API_DOMAIN}/${API_VER}/files/${fileKey}?${queryParams}`);
 }
@@ -234,7 +234,7 @@ export function getTeamComponentsApi(
 export function getFileComponentsApi(this: ApiClass, project_id: string): Promise<GetFileComponentsResult> {
     return this.request(`${API_DOMAIN}/${API_VER}/files/${project_id}/components`);
 }
-export function getFileComponentsStreamApi(this: ApiClass, project_id: string): Promise<Stream> {
+export function getFileComponentsStreamApi(this: ApiClass, project_id: string): Promise<AxiosResponse> {
     return this.streamRequest(`${API_DOMAIN}/${API_VER}/files/${project_id}/components`);
 }
 
@@ -284,7 +284,7 @@ export function getTeamStylesApi(
 export function getFileStylesApi(this: ApiClass, file_key: string): Promise<GetFileStylesResult> {
     return this.request(`${API_DOMAIN}/${API_VER}/files/${file_key}/styles`);
 }
-export function getFileStylesStreamApi(this: ApiClass, file_key: string): Promise<Stream> {
+export function getFileStylesStreamApi(this: ApiClass, file_key: string): Promise<AxiosResponse> {
     return this.streamRequest(`${API_DOMAIN}/${API_VER}/files/${file_key}/styles`);
 }
 

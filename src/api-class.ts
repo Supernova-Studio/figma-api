@@ -83,7 +83,7 @@ export class Api {
 
         const res = await axios(axiosParams);
         if (Math.floor(res.status / 100) !== 2) throw res.statusText;
-        return res.data;
+        return res;
     };
 
     headFile = headFileApi;

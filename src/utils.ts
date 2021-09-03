@@ -20,4 +20,4 @@ export class ApiError extends Error {
 }
 
 export type ApiRequestMethod = <T>(url: string, opts?: { method: AxiosMethod, data?: string, fullResponse?: boolean }) => Promise<T>;
-export type ApiStreamRequestMethod = (url: string, opts?: { method: AxiosMethod, data?: string }) => Promise<Stream>;
+export type ApiStreamRequestMethod = (url: string, opts?: { method: AxiosMethod, data?: string }) => Promise<AxiosResponse>;
