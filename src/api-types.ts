@@ -1,4 +1,4 @@
-import { Vector, FrameOffset, Component, Style, Node, FrameInfo, PageInfo, StyleType } from "./ast-types";
+import { Vector, FrameOffset, Component, Style, Node, FrameInfo, PageInfo, ContainingStateGroup, StyleType } from "./ast-types";
 
 /** A comment or reply left by a user */
 export interface Comment {
@@ -56,11 +56,15 @@ export interface Project {
     name: string,
 }
 
-export interface ProjectFile {
+export interface BaseFile {
     key: string,
     name: string,
     thumbnail_url: string,
     last_modified: string,
+}
+
+export interface ProjectFile extends BaseFile {
+    branches?: BaseFile[];
 }
 
 /** An arrangement of published UI elements that can be instantiated across figma files */
@@ -83,8 +87,8 @@ export interface ComponentMetadata {
     updated_at: string,
     /** The user who last updated the component */
     user: User,
-    /** Data on component's containing frame, if component resides within a frame */
-    containing_frame?: FrameInfo,
+    /** Data on component's containing frame, if component resides within a frame, plus the optional "containingStateGroup" if is a variant of a component_set */
+    containing_frame?: FrameInfo & { containingStateGroup?: ContainingStateGroup },
     /** Data on component's containing page, if component resides in a multi-page file */
     containing_page?: PageInfo,
 }
@@ -155,9 +159,11 @@ export interface GetFileResult {
     components: { [nodeId: string]: Component },
     schemaVersion: number,
     styles: { [styleName: string]: Style },
+    mainFileKey?: string;
+    branches?: ProjectFile[]
 }
 
-/** The `name`, `lastModified`, `thumbnailURL`, and `version` attributes are all metadata of the specified file. */
+/** The `name`, `lastModified`, `thumbnailUrl`, and `version` attributes are all metadata of the specified file. */
 export interface GetFileNodesResult {
     name: string,
     lastModified: string,

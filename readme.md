@@ -16,8 +16,8 @@ Promises & ES6.
 
 or browser version:
 
-`https://raw.githubusercontent.com/Morglod/figma-api/master/lib/figma-api.js`
-`https://raw.githubusercontent.com/Morglod/figma-api/master/lib/figma-api.min.js`
+`https://raw.githubusercontent.com/didoo/figma-api/master/lib/figma-api.js`
+`https://raw.githubusercontent.com/didoo/figma-api/master/lib/figma-api.min.js`
 
 All api in browser exported to global `Figma` object.
 
@@ -52,599 +52,6 @@ Change API endpoint setting `Figma.API_DOMAIN` & `Figma.API_VER` variables.
 
 We have followed the same organisation as the official [Figma API documentation](https://www.figma.com/developers/api) to describe our API methods, so it's easier to find the exact endpoint call you are looking for.
 
-### Authentication
-
-#### `new Api ({ personalAccessToken, oAuthToken })`
-
-Creates new Api object with specified `personal` or `oAuthToken`.
-[Documentation on how to get tokens](https://www.figma.com/developers/api#authentication)
-
-### Figma files
-
-<details>
-<summary>
-Api.getFile
-</summary>
-
-```ts
-Api.getFile(fileKey, opts?: { version?, geometry? })
-```
-[Require file data](https://www.figma.com/developers/api#get-files-endpoint) with specified version.
-Set `geometry='paths'` to export vector data.
-
-Returns:
-```ts
-{
-    name: string,
-    lastModified: string,
-    thumbnailURL: string,
-    version: string,
-    document: Node<'DOCUMENT'>,
-    components: { [nodeId: string]: Component },
-    schemaVersion: 0,
-    styles: { [styleName: string]: Style }
-}
-```
-</details>
-
-<details>
-<summary>
-Api.getFileNodes
-</summary>
-
-```ts
-Api.getFileNodes(fileKey, ids, opts?: { version?, geometry? })
-```
-[Require file nodes data](https://www.figma.com/developers/api#get-file-nodes-endpoint) with specified version.
-Set `geometry='paths'` to export vector data.
-
-Returns:
-```ts
-{
-    name: string,
-    lastModified: string,
-    thumbnailURL: string,
-    err: string,
-    nodes: {
-        id: {
-            document: Node<'DOCUMENT'>,
-            components: { [nodeId: string]: Component },
-            schemaVersion: 0,
-            styles: { [styleName: string]: Style }
-        }
-    }
-}
-```
-</details>
-
-<details>
-<summary>
-Api.getImage
-</summary>
-
-```ts
-Api.getImage(fileKey, opts?: {
-    /** A comma separated list of node IDs to render */
-    ids: string,
-    /** A number between 0.01 and 4, the image scaling factor */
-    scale: number,
-    /** Image output format */
-    format: 'jpg'|'png'|'svg',
-    /** Whether to include id attributes for all SVG elements. `Default: false` */
-    svg_include_id?: boolean,
-    /** Whether to simplify inside/outside strokes and use stroke attribute if possible instead of <mask>. `Default: true` */
-    svg_simplify_stroke?: boolean,
-    /** A specific version ID to get. Omitting this will get the current version of the file */
-    version?: string,
-})
-```
-[Renders images](https://www.figma.com/developers/api#get-images-endpoint) from a file.
-
-Returns:
-```ts
-{
-    err: string,
-    images: { [nodeId: string]: string|null },
-    status: number
-}
-```
-</details>
-
-<details>
-<summary>
-Api.getImageFills
-</summary>
-
-```ts
-Api.getImageFills(fileKey)
-```
-
-[Returns download links for all images present in image fills in a document.](https://www.figma.com/developers/api#get-image-fills-endpoint)
-
-Returns:
-```ts
-{
-    images?: {
-        [imageRef: string]: imageUrl,
-    },
-}
-```
-</details>
-
-### Comments
-
-<details>
-<summary>
-Api.getComments
-</summary>
-
-```ts
-Api.getComments(fileKey)
-```
-[List of comments](https://www.figma.com/developers/api#get-comments-endpoint) left on the file.
-
-Returns:
-```ts
-{
-    comments: Comment[],
-}
-```
-</details>
-
-<details>
-<summary>
-Api.postComment
-</summary>
-
-```ts
-Api.postComment(fileKey, message, client_meta, comment_id?)
-```
-[Posts a new comment on the file](https://www.figma.com/developers/api#post-comments-endpoint).
-
-Returns:
-```ts
-Comment
-```
-</details>
-
-<details>
-<summary>
-Api.deleteComments
-</summary>
-
-```ts
-Api.deleteComment(fileKey, comment_id)
-```
-[Deletes a specific comment](https://www.figma.com/developers/api#delete-comments-endpoint). Only the person who made the comment is allowed to delete it.
-
-Returns:
-```
-Nothing is returned from this endpoint
-```
-</details>
-
-### Users
-
-<details>
-<summary>
-Api.getMe
-</summary>
-
-```ts
-Api.getMe()
-```
-[You can use the Users Endpoint](https://www.figma.com/developers/api#users-endpoints) to access information regarding the currently authenticated User. When using OAuth 2, the User in question must be authenticated through the Figma API to access their information.
-
-Returns:
-```ts
-User
-```
-</details>
-
-### Version history
-
-<details>
-<summary>
-Api.getVersions
-</summary>
-
-```ts
-Api.getVersions(fileKey)
-```
-A [list of the version](https://www.figma.com/developers/api#get-file-versions-endpoint) history of a file. The version history consists of versions, manually-saved additions to the version history of a file.
-If the account is not on a paid team, version history is limited to the past 30 days. Note that version history will not include autosaved versions.
-
-Returns:
-```ts
-{
-    versions: Version[]
-}
-```
-</details>
-
-### Projects
-
-<details>
-<summary>
-Api.getTeamProjects
-</summary>
-
-```ts
-Api.getTeamProjects(team_id)
-```
-[Lists the projects](https://www.figma.com/developers/api#get-team-projects-endpoint) for a specified team. Note that this will only return projects visible to the authenticated user or owner of the developer token. Note: it is not currently possible to programmatically obtain the team id of a user just from a token. To obtain a team id, navigate to a team page of a team you are a part of. The team id will be present in the URL after the word team and before your team name.
-
-Returns:
-```ts
-{
-    name: string,
-    projects: { id: number, name: string }[],
-}
-```
-</details>
-
-<details>
-<summary>
-Api.getProjectFiles
-</summary>
-
-```ts
-Api.getProjectFiles(project_id)
-```
-[List the files](https://www.figma.com/developers/api#get-project-files-endpoint) in a given project.
-
-Returns:
-```ts
-{
-    files: {
-        key: string,
-        name: string,
-        thumbnail_url: string,
-        last_modified: string,
-    }[],
-}
-```
-
-</details>
-
-### Components and styles
-
-<details>
-<summary>
-Api.getTeamComponents
-</summary>
-
-```ts
-Api.getTeamComponents(team_id, opts?: { page_size?, cursor? })
-```
-
-[Get a paginated list of published components](https://www.figma.com/developers/api#get-team-components-endpoint) within a team library.
-
-Returns:
-```ts
-{
-    error: boolean,
-    meta: {
-        components: [
-            /* ComponentMetadata */ {
-                key: string,
-                file_key: string,
-                node_id: string,
-                thumbnail_url: string,
-                name: string,
-                description: string,
-                updated_at: string,
-                created_at: string,
-                user: User,
-                containing_frame: FrameInfo,
-            },
-        ],
-        cursor: {
-            before: number,
-            after: number,
-        },
-    },
-    status: number
-}
-```
-
-</details>
-
-<details>
-<summary>
-Api.getFileComponents
-</summary>
-
-```ts
-Api.getFileComponents(fileKey)
-```
-
-[Get a list of published components](https://www.figma.com/developers/api#get-file-components-endpoint) within a file library.
-
-Returns:
-```ts
-{
-    error: boolean,
-    meta: {
-        components: [
-            /* ComponentMetadata */ {
-                key: string,
-                file_key: string,
-                node_id: string,
-                thumbnail_url: string,
-                name: string,
-                description: string,
-                updated_at: string,
-                created_at: string,
-                user: User,
-                containing_frame: FrameInfo,
-            },
-        ],
-    },
-    status: number
-}
-```
-
-</details>
-
-<details>
-<summary>
-Api.getComponent
-</summary>
-
-```ts
-Api.getComponent(componentKey)
-```
-
-[Get metadata on a component by key.](https://www.figma.com/developers/api#get-component-endpoint)
-
-Returns:
-```ts
-{
-    error: boolean,
-    meta: {
-        /* ComponentMetadata */ {
-            key: string,
-            file_key: string,
-            node_id: string,
-            thumbnail_url: string,
-            name: string,
-            description: string,
-            updated_at: string,
-            created_at: string,
-            user: User,
-            containing_frame: FrameInfo,
-        },
-    },
-    status: number
-}
-```
-</details>
-
-<details>
-<summary>
-Api.getTeamComponentSets
-</summary>
-
-```ts
-Api.getTeamComponentSets(team_id, opts?: { page_size?, after?, before? })
-```
-
-[Get a paginated list of published component_sets](https://www.figma.com/developers/api#get-team-component-sets-endpoint) within a team library.
-
-Returns:
-```ts
-{
-    error: boolean,
-    meta: {
-        component_sets: [
-            /* ComponentSetMetadata */ {
-                key: string,
-                file_key: string,
-                node_id: string,
-                thumbnail_url: string,
-                name: string,
-                description: string,
-                updated_at: string,
-                created_at: string,
-                user: User,
-                containing_frame: FrameInfo,
-            },
-        ],
-        cursor: {
-            before: number,
-            after: number,
-        },
-    },
-    status: number
-}
-```
-</details>
-
-<details>
-<summary>
-Api.getFileComponentSets
-</summary>
-
-```ts
-Api.getFileComponentSets(file_key)
-```
-
-[Get a list of published component_sets](https://www.figma.com/developers/api#get-file-component-sets-endpoint) within a file library.
-
-Returns:
-```ts
-{
-    error: boolean,
-    meta: {
-        component_sets: [
-            /* ComponentSetMetadata */ {
-                key: string,
-                file_key: string,
-                node_id: string,
-                thumbnail_url: string,
-                name: string,
-                description: string,
-                updated_at: string,
-                created_at: string,
-                user: User,
-                containing_frame: FrameInfo,
-            },
-        ],
-    },
-    status: number
-}
-```
-</details>
-
-<details>
-<summary>
-Api.getComponentSet
-</summary>
-
-```ts
-Api.getComponentSet(componentsetKey)
-```
-
-[Get metadata on a component_set by key.](https://www.figma.com/developers/api#get-component-sets-endpoint)
-
-Returns:
-```ts
-{
-    error: boolean,
-    meta: {
-        /* ComponentSetMetadata */ {
-            key: string,
-            file_key: string,
-            node_id: string,
-            thumbnail_url: string,
-            name: string,
-            description: string,
-            updated_at: string,
-            created_at: string,
-            user: User,
-            containing_frame: FrameInfo,
-        }
-    },
-    status: number
-}
-```
-</details>
-
-<details>
-<summary>
-Api.getTeamStyles
-</summary>
-
-```ts
-Api.getTeamStyles(team_id, opts?: { page_size?, cursor? })
-```
-
-[Get a paginated list of published styles](https://www.figma.com/developers/api#get-team-styles-endpoint) within a team library.
-
-Returns:
-```ts
-{
-  error: boolean,
-  meta: {
-      styles: [
-          {
-              key: string,
-                file_key: string,
-                node_id: string,
-                style_type: StyleType,
-                thumbnail_url: string,
-                name: string,
-                description: string,
-                updated_at: string,
-                created_at: string,
-                sort_position: string,
-                user: User,
-            },
-        ],
-        cursor: {
-            before: number,
-            after: number,
-        },
-    },
-    status: number
-}
-```
-
-</details>
-
-<details>
-<summary>
-Api.getFileStyles
-</summary>
-
-```ts
-Api.getFileStyles(file_key)
-```
-
-[Get a list of published styles](https://www.figma.com/developers/api#get-file-styles-endpoint) within a file library.
-
-Returns:
-```ts
-{
-    error: boolean,
-    meta: {
-        styles: [
-            {
-                key: string,
-                file_key: string,
-                node_id: string,
-                style_type: StyleType,
-                thumbnail_url: string,
-                name: string,
-                description: string,
-                updated_at: string,
-                created_at: string,
-                sort_position: string,
-                user: User,
-            },
-        ],
-    },
-    status: number
-}
-```
-</details>
-
-<details>
-<summary>
-Api.getStyle
-</summary>
-
-```ts
-Api.getStyle(styleKey)
-```
-
-[Get metadata on a style by key.](https://www.figma.com/developers/api#get-style-endpoint)
-
-Returns:
-```ts
-    error: boolean,
-    meta: {
-        {
-            key: string,
-            file_key: string,
-            node_id: string,
-            style_type: StyleType,
-            thumbnail_url: string,
-            name: string,
-            description: string,
-            updated_at: string,
-            created_at: string,
-            sort_position: string,
-            user: User,
-        },
-    },
-    status: number
-}
-```
-
-</details>
-
 <details>
 <summary>
 Helpers
@@ -657,9 +64,17 @@ Populate headers with auth.
 Make request with auth headers.
 </details>
 
-### Auth helpers
+### Authentication
 
-[OAuth figma documentation](https://www.figma.com/developers/api#auth-oauth).
+#### `new Api ({ personalAccessToken, oAuthToken })`
+
+Creates new Api object with specified `personal` or `oAuthToken`.
+[Documentation on how to get tokens](https://www.figma.com/developers/api#authentication)
+
+<details>
+<summary>
+Helpers
+</summary>
 
 ```ts
 function oAuthLink(
@@ -688,6 +103,252 @@ function oAuthToken(
 }>
 ```
 Returns `access token` info from oauth code (see `oAuthLink` method).
+</details>
+
+
+### Figma files
+
+<details>
+<summary>
+Api.getFile
+</summary>
+
+```ts
+Api.getFile(fileKey, opts?: { version?, ids?, depth?, geometry?, plugin_data?: string, branch_data?: boolean })
+```
+[Require file data](https://www.figma.com/developers/api#get-files-endpoint) with specified version.
+</details>
+
+<details>
+<summary>
+Api.getFileNodes
+</summary>
+
+```ts
+Api.getFileNodes(fileKey, ids, opts?: { version?, depth?, geometry?, plugin_data? })
+```
+[Require file nodes data](https://www.figma.com/developers/api#get-file-nodes-endpoint) with specified version.
+</details>
+
+<details>
+<summary>
+Api.getImage
+</summary>
+
+```ts
+Api.getImage(fileKey, opts?: { ids, scale, format, svg_include_id?, svg_simplify_stroke?, use_absolute_bounds?, version?: string })
+```
+[Renders images](https://www.figma.com/developers/api#get-images-endpoint) from a file.
+</details>
+
+<details>
+<summary>
+Api.getImageFills
+</summary>
+
+```ts
+Api.getImageFills(fileKey)
+```
+
+[Returns download links for all images present in image fills in a document.](https://www.figma.com/developers/api#get-image-fills-endpoint)
+</details>
+
+### Comments
+
+<details>
+<summary>
+Api.getComments
+</summary>
+
+```ts
+Api.getComments(fileKey)
+```
+[List of comments](https://www.figma.com/developers/api#get-comments-endpoint) left on the file.
+</details>
+
+<details>
+<summary>
+Api.postComment
+</summary>
+
+```ts
+Api.postComment(fileKey, message, client_meta, comment_id?)
+```
+[Posts a new comment on the file](https://www.figma.com/developers/api#post-comments-endpoint).
+</details>
+
+<details>
+<summary>
+Api.deleteComments
+</summary>
+
+```ts
+Api.deleteComment(fileKey, comment_id)
+```
+[Deletes a specific comment](https://www.figma.com/developers/api#delete-comments-endpoint). Only the person who made the comment is allowed to delete it.
+</details>
+
+### Users
+
+<details>
+<summary>
+Api.getMe
+</summary>
+
+```ts
+Api.getMe()
+```
+[You can use the Users Endpoint](https://www.figma.com/developers/api#users-endpoints) to access information regarding the currently authenticated User. When using OAuth 2, the User in question must be authenticated through the Figma API to access their information.
+</details>
+
+### Version history
+
+<details>
+<summary>
+Api.getVersions
+</summary>
+
+```ts
+Api.getVersions(fileKey)
+```
+A [list of the version](https://www.figma.com/developers/api#get-file-versions-endpoint) history of a file. The version history consists of versions, manually-saved additions to the version history of a file.
+If the account is not on a paid team, version history is limited to the past 30 days. Note that version history will not include autosaved versions.
+</details>
+
+### Projects
+
+<details>
+<summary>
+Api.getTeamProjects
+</summary>
+
+```ts
+Api.getTeamProjects(team_id)
+```
+[Lists the projects](https://www.figma.com/developers/api#get-team-projects-endpoint) for a specified team. Note that this will only return projects visible to the authenticated user or owner of the developer token. Note: it is not currently possible to programmatically obtain the team id of a user just from a token. To obtain a team id, navigate to a team page of a team you are a part of. The team id will be present in the URL after the word team and before your team name.
+</details>
+
+<details>
+<summary>
+Api.getProjectFiles
+</summary>
+
+```ts
+Api.getProjectFiles(project_id, opts?: { branch_data?: boolean })
+```
+[List the files](https://www.figma.com/developers/api#get-project-files-endpoint) in a given project.
+</details>
+
+### Components and styles
+
+<details>
+<summary>
+Api.getTeamComponents
+</summary>
+
+```ts
+Api.getTeamComponents(team_id, opts?: { page_size?, after?, before? })
+```
+
+[Get a paginated list of published components](https://www.figma.com/developers/api#get-team-components-endpoint) within a team library.
+</details>
+
+<details>
+<summary>
+Api.getFileComponents
+</summary>
+
+```ts
+Api.getFileComponents(fileKey)
+```
+
+[Get a list of published components](https://www.figma.com/developers/api#get-file-components-endpoint) within a file library.
+</details>
+
+<details>
+<summary>
+Api.getComponent
+</summary>
+
+```ts
+Api.getComponent(key)
+```
+
+[Get metadata on a component by key.](https://www.figma.com/developers/api#get-component-endpoint)
+</details>
+
+<details>
+<summary>
+Api.getTeamComponentSets
+</summary>
+
+```ts
+Api.getTeamComponentSets(team_id, opts?: { page_size?, after?, before? })
+```
+
+[Get a paginated list of published component_sets](https://www.figma.com/developers/api#get-team-component-sets-endpoint) within a team library.
+</details>
+
+<details>
+<summary>
+Api.getFileComponentSets
+</summary>
+
+```ts
+Api.getFileComponentSets(file_key)
+```
+
+[Get a list of published component_sets](https://www.figma.com/developers/api#get-file-component-sets-endpoint) within a file library.
+</details>
+
+<details>
+<summary>
+Api.getComponentSet
+</summary>
+
+```ts
+Api.getComponentSet(key)
+```
+
+[Get metadata on a component_set by key.](https://www.figma.com/developers/api#get-component-sets-endpoint)
+</details>
+
+<details>
+<summary>
+Api.getTeamStyles
+</summary>
+
+```ts
+Api.getTeamStyles(team_id, opts?: { page_size?, after?, before? })
+```
+
+[Get a paginated list of published styles](https://www.figma.com/developers/api#get-team-styles-endpoint) within a team library.
+</details>
+
+<details>
+<summary>
+Api.getFileStyles
+</summary>
+
+```ts
+Api.getFileStyles(file_key)
+```
+
+[Get a list of published styles](https://www.figma.com/developers/api#get-file-styles-endpoint) within a file library.
+</details>
+
+<details>
+<summary>
+Api.getStyle
+</summary>
+
+```ts
+Api.getStyle(key)
+```
+
+[Get metadata on a style by key.](https://www.figma.com/developers/api#get-style-endpoint)
+
+</details>
 
 ## File types
 
@@ -725,9 +386,18 @@ Check if node is type of specified node.
 ## Development
 
 ```
-git clone https://github.com/Morglod/figma-api.git
+git clone https://github.com/didoo/figma-api.git
 cd figma-api
-git checkout dev
+git checkout main
 npm i
 npm run build
+```
+
+## Release
+
+```
+npm version [<newversion> | major | minor | patch]
+#if not yet logged in
+npm login
+npm publish
 ```
