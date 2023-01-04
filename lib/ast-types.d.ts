@@ -67,13 +67,13 @@ export declare enum TextAutoResize {
 /** The unit of the line height value specified by the user. */
 export declare enum LineHeightUnit {
     PIXELS = "PIXELS",
-    'FONT_SIZE_%' = "FONT_SIZE_%",
-    'INTRINSIC_%' = "INTRINSIC_%"
+    "FONT_SIZE_%" = "FONT_SIZE_%",
+    "INTRINSIC_%" = "INTRINSIC_%"
 }
 /**
  * Map<StyleType, String>
  * A mapping of a StyleType to style ID (see Style) of styles present on this node. The style ID can be used to look up more information about the style in the top-level styles field.
-*/
+ */
 export declare type StylesMap = {
     [styleType in StyleType]: string;
 };
@@ -319,7 +319,7 @@ export declare function isEffectShadow(effect: Effect): effect is EffectShadow;
 export declare function isEffectBlur(effect: Effect): effect is EffectBlur;
 export declare type Hyperlink = {
     /** Type of hyperlink */
-    type: 'URL' | 'NODE';
+    type: "URL" | "NODE";
     /** URL being linked to, if URL type */
     url: string;
     /** ID of frame hyperlink points to, if NODE type */
@@ -451,9 +451,9 @@ export declare type TypeStyle = {
     /** Dimensions along which text will auto resize, default is that the text does not auto-resize. Default is `NONE` */
     textAutoResize?: TextAutoResize;
     /** Horizontal text alignment as string enum */
-    textAlignHorizontal: 'LEFT' | 'RIGHT' | 'CENTER' | 'JUSTIFIED';
+    textAlignHorizontal: "LEFT" | "RIGHT" | "CENTER" | "JUSTIFIED";
     /** Vertical text alignment as string enum */
-    textAlignVertical: 'TOP' | 'CENTER' | 'BOTTOM';
+    textAlignVertical: "TOP" | "CENTER" | "BOTTOM";
     /** Space between characters in px */
     letterSpacing: number;
     /** Paints applied to characters */
@@ -473,7 +473,7 @@ export declare type TypeStyle = {
     /** The unit of the line height value specified by the user. */
     lineHeightUnit: LineHeightUnit;
 };
-export declare type StyleType = 'FILL' | 'TEXT' | 'EFFECT' | 'GRID';
+export declare type StyleType = "FILL" | "TEXT" | "EFFECT" | "GRID";
 /** Data on the frame a component resides in */
 export interface FrameInfo {
     /** Id of the frame node within the figma file */
@@ -492,7 +492,7 @@ export interface FrameInfo {
  *  (https://forum.figma.com/t/missing-containingstategroup-parameter-in-documentation-for-frameinfo/2558)
  *  and filed a bug with the support, but no one replied. From what I understand, this extra parameters are
  *  added when a component is a variant within a component_set (the name/nodeId are of the parent component_set)
-*/
+ */
 export interface ContainingStateGroup {
     /** Name of the element's residing "state group" (likely, a component_set) */
     name: string;
@@ -539,6 +539,9 @@ export interface Style {
 export interface DOCUMENT {
     /** An array of canvases attached to the document */
     children: Node[];
+    pluginData: {
+        [pluginId: string]: any;
+    };
 }
 /** Represents a single page */
 export interface CANVAS {
@@ -561,12 +564,21 @@ export interface FRAME {
     background: Paint[];
     /** @deprecated Background color of the node. This is deprecated, as frames now support more than a solid color as a background. Please use the background field instead. */
     backgroundColor?: Color;
-    /** An array of fill paints applied to the node */
+    /** default: [] An array of export settings representing images to export from node */
+    exportSettings: ExportSetting[];
+    /** How this node blends with nodes behind it in the scene (see blend mode section for more details) */
+    blendMode: BlendMode;
+    /** default: [] An array of fill paints applied to the node */
     fills: Paint[];
-    /** An array of stroke paints applied to the node */
+    /** default: [] An array of stroke paints applied to the node */
     strokes: Paint[];
     /** The weight of strokes on the node */
     strokeWeight: number;
+    strokeCap?: StrokeCap;
+    /** Where stroke is drawn relative to the vector outline as a string enum
+      "INSIDE": draw stroke inside the shape boundary
+      "OUTSIDE": draw stroke outside the shape boundary
+      "CENTER": draw stroke centered along the shape boundary */
     /** The weight of strokes on different side of the node */
     individualStrokeWeights?: {
         top: number;
@@ -576,14 +588,16 @@ export interface FRAME {
     };
     /** Position of stroke relative to vector outline, as a string enum */
     strokeAlign: StrokeAlign;
-    /** Radius of each corner of the frame if a single radius is set for all corners */
+    /** Radius of each corner of the rectangle */
     cornerRadius: number;
     /** Array of length 4 of the radius of each corner of the rectangle, starting in the top left and proceeding clockwise */
     rectangleCornerRadii: [number, number, number, number];
-    /** default: [] An array of export settings representing images to export from node */
-    exportSettings: ExportSetting[];
-    /** How this node blends with nodes behind it in the scene (see blend mode section for more details) */
-    blendMode: BlendMode;
+    /** A string enum with value of "MITER", "BEVEL", or "ROUND", describing how corners in vector paths are rendered. */
+    strokeJoin?: StrokeJoin;
+    /** An array of floating point numbers describing the pattern of dash length and gap lengths that the vector path follows. For example a value of [1, 2] indicates that the path has a dash of length 1 followed by a gap of length 2, repeated. */
+    strokeDashes?: number[];
+    /** Only valid if strokeJoin is "MITER". The corner angle, in degrees, below which strokeJoin will be set to "BEVEL" to avoid super sharp corners. By default this is 28.96 degrees. */
+    strokeMiterAngle?: number;
     /** default: false Keep height and width constrained to same ratio */
     preserveRatio: boolean;
     /** Horizontal and vertical layout constraints for node */
@@ -609,15 +623,15 @@ export interface FRAME {
     /** Does this node clip content outside of its bounds? */
     clipsContent: boolean;
     /** Whether this layer uses auto-layout to position its children. default NONE */
-    layoutMode: 'NONE' | 'HORIZONTAL' | 'VERTICAL';
+    layoutMode: "NONE" | "HORIZONTAL" | "VERTICAL";
     /** Whether the primary axis has a fixed length (determined by the user) or an automatic length (determined by the layout engine). This property is only applicable for auto-layout frames. Default AUTO */
     primaryAxisSizingMode: AxisSizingMode;
     /** Whether the counter axis has a fixed length (determined by the user) or an automatic length (determined by the layout engine). This property is only applicable for auto-layout frames. Default AUTO */
     counterAxisSizingMode: AxisSizingMode;
     /** Determines how the auto-layout frame’s children should be aligned in the primary axis direction. This property is only applicable for auto-layout frames. Default MIN */
-    primaryAxisAlignItems: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
+    primaryAxisAlignItems: "MIN" | "CENTER" | "MAX" | "SPACE_BETWEEN";
     /** Determines how the auto-layout frame’s children should be aligned in the counter axis direction. This property is only applicable for auto-layout frames. Default MIN */
-    counterAxisAlignItems: 'MIN' | 'CENTER' | 'MAX' | 'BASELINE';
+    counterAxisAlignItems: "MIN" | "CENTER" | "MAX" | "BASELINE";
     /** default: 0. The padding between the left border of the frame and its children. This property is only applicable for auto-layout frames. */
     paddingLeft: number;
     /** default: 0. The padding between the right border of the frame and its children. This property is only applicable for auto-layout frames. */
@@ -637,7 +651,7 @@ export interface FRAME {
     /**default: false. Applicable only if layoutMode != "NONE". */
     strokesIncludedInLayout: boolean;
     /** Defines the scrolling behavior of the frame, if there exist contents outside of the frame boundaries. The frame can either scroll vertically, horizontally, or in both directions to the extents of the content contained within it. This behavior can be observed in a prototype. Default NONE */
-    overflowDirection: 'NONE' | 'HORIZONTAL_SCROLLING' | 'VERTICAL_SCROLLING' | 'HORIZONTAL_AND_VERTICAL_SCROLLING';
+    overflowDirection: "NONE" | "HORIZONTAL_SCROLLING" | "VERTICAL_SCROLLING" | "HORIZONTAL_AND_VERTICAL_SCROLLING";
     /** default: [] An array of layout grids attached to this node (see layout grids section for more details). GROUP nodes do not have this attribute */
     layoutGrids?: LayoutGrid[];
     /** default: [] An array of effects attached to this node (see effects section for more details) */
@@ -646,8 +660,10 @@ export interface FRAME {
     isMask: boolean;
     /** default: false Does this mask ignore fill style (like gradients) and effects? */
     isMaskOutline: boolean;
+    /** A mapping of a StyleType to style ID (see Style) of styles present on this node. The style ID can be used to look up more information about the style in the top-level styles field. */
+    styles?: StylesMap;
     /** default: AUTO */
-    layoutPositioning: 'AUTO' | 'ABSOLUTE';
+    layoutPositioning: "AUTO" | "ABSOLUTE";
 }
 /** A logical grouping of nodes */
 export declare type GROUP = FRAME;
@@ -705,9 +721,9 @@ export interface VECTOR {
     /** Only specified if parameter geometry=paths is used. An array of paths representing the object stroke */
     strokeGeometry?: Path[];
     /** Where stroke is drawn relative to the vector outline as a string enum
-    "INSIDE": draw stroke inside the shape boundary
-    "OUTSIDE": draw stroke outside the shape boundary
-    "CENTER": draw stroke centered along the shape boundary */
+      "INSIDE": draw stroke inside the shape boundary
+      "OUTSIDE": draw stroke outside the shape boundary
+      "CENTER": draw stroke centered along the shape boundary */
     strokeAlign: StrokeAlign;
     /** A string enum with value of "MITER", "BEVEL", or "ROUND", describing how corners in vector paths are rendered. */
     strokeJoin?: StrokeJoin;
@@ -718,7 +734,7 @@ export interface VECTOR {
     /** A mapping of a StyleType to style ID (see Style) of styles present on this node. The style ID can be used to look up more information about the style in the top-level styles field. */
     styles?: StylesMap;
     /** default: AUTO */
-    layoutPositioning: 'AUTO' | 'ABSOLUTE';
+    layoutPositioning: "AUTO" | "ABSOLUTE";
 }
 /** A group that has a boolean operation applied to it */
 export declare type BOOLEAN = VECTOR & {
