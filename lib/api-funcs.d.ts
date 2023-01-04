@@ -1,51 +1,10 @@
-import { AxiosResponse } from "axios";
-import { DeleteCommentsResult, GetCommentsResult, GetComponentResult, GetComponentSetResult, GetFileComponentSetsResult, GetFileComponentsResult, GetFileNodesResult, GetFileResult, GetFileStylesResult, GetImageFillsResult, GetImageResult, GetProjectFilesResult, GetStyleResult, GetTeamComponentSetsResult, GetTeamComponentsResult, GetTeamProjectsResult, GetTeamStylesResult, GetUserMeResult, GetVersionsResult, PostCommentResult } from "./api-types";
-import { FrameOffset, Vector } from "./ast-types";
-import { ApiRequestMethod, ApiStreamRequestMethod } from "./utils";
+import { Vector, FrameOffset, NodeType } from "./ast-types";
+import { GetFileResult, GetFileNodesResult, GetImageResult, GetImageFillsResult, GetCommentsResult, PostCommentResult, DeleteCommentsResult, GetUserMeResult, GetVersionsResult, GetTeamProjectsResult, GetProjectFilesResult, GetTeamComponentsResult, GetFileComponentsResult, GetComponentResult, GetTeamComponentSetsResult, GetFileComponentSetsResult, GetComponentSetResult, GetTeamStylesResult, GetFileStylesResult, GetStyleResult } from "./api-types";
+import { ApiRequestMethod } from "./utils";
 declare type ApiClass = {
     request: ApiRequestMethod;
-    streamRequest: ApiStreamRequestMethod;
-};
-declare type GetFileApiOptions = {
-    /** A specific version ID to get. Omitting this will get the current version of the file */
-    version?: string;
-    /** If specified, only a subset of the document will be returned corresponding to the nodes listed, their children, and everything between the root node and the listed nodes */
-    ids?: string[];
-    /** Positive integer representing how deep into the document tree to traverse. For example, setting this to 1 returns only Pages, setting it to 2 returns Pages and all top level objects on each page. Not setting this parameter returns all nodes */
-    depth?: number;
-    /** Set to "paths" to export vector data */
-    geometry?: 'paths';
-    /** A comma separated list of plugin IDs and/or the string "shared". */
-    plugin_data?: string;
 };
 export declare function getFileApi(this: ApiClass, 
-/**
- * File to export JSON from
- *
- * Can be found in url to file, eg:
- * https://www.figma.com/file/FILE_KEY/FILE_NAME
- */
-fileKey: string, opts?: GetFileApiOptions): Promise<GetFileResult>;
-export declare function getFileStreamApi(this: ApiClass, 
-/**
- * File to export JSON from
- *
- * Can be found in url to file, eg:
- * https://www.figma.com/file/FILE_KEY/FILE_NAME
- */
-fileKey: string, opts?: GetFileApiOptions): Promise<AxiosResponse>;
-export declare function getFileFullApi(this: ApiClass, 
-/**
- * File to export JSON from
- *
- * Can be found in url to file, eg:
- * https://www.figma.com/file/FILE_KEY/FILE_NAME
- */
-fileKey: string, opts?: GetFileApiOptions): Promise<{
-    headers: any;
-    data: GetFileResult;
-}>;
-export declare function headFileApi(this: ApiClass, 
 /**
  * File to export JSON from
  *
@@ -65,8 +24,8 @@ fileKey: string, opts?: {
     plugin_data?: string;
     /** Set to returns branch metadata for the requested file */
     branch_data?: boolean;
-}): Promise<any>;
-export declare function getFileNodesApi(this: ApiClass, 
+}): Promise<GetFileResult>;
+export declare function getFileNodesApi<T extends NodeType = 'DOCUMENT'>(this: ApiClass, 
 /**
  * File to export JSON from
  *
@@ -112,7 +71,7 @@ client_meta: Vector | FrameOffset,
 comment_id?: string): Promise<PostCommentResult>;
 export declare function deleteCommentsApi(this: ApiClass, fileKey: string, comment_id: string): Promise<DeleteCommentsResult>;
 export declare function getUserMeApi(this: ApiClass): Promise<GetUserMeResult>;
-export declare function getVersionsApi(this: ApiClass, fileKey: string, after?: string, before?: string, pageSize?: number): Promise<GetVersionsResult>;
+export declare function getVersionsApi(this: ApiClass, fileKey: string): Promise<GetVersionsResult>;
 export declare function getTeamProjectsApi(this: ApiClass, team_id: string): Promise<GetTeamProjectsResult>;
 export declare function getProjectFilesApi(this: ApiClass, project_id: string, opts?: {
     /** Set to returns branch metadata for the requested file */
@@ -130,7 +89,6 @@ team_id: string, opts?: {
     before?: number;
 }): Promise<GetTeamComponentsResult>;
 export declare function getFileComponentsApi(this: ApiClass, fileKey: string): Promise<GetFileComponentsResult>;
-export declare function getFileComponentsStreamApi(this: ApiClass, project_id: string): Promise<AxiosResponse>;
 /** Get metadata on a component by key. */
 export declare function getComponentApi(this: ApiClass, 
 /** The unique identifier of the component. */
@@ -158,7 +116,6 @@ export declare function getTeamStylesApi(this: ApiClass, team_id: string, opts?:
     before?: number;
 }): Promise<GetTeamStylesResult>;
 export declare function getFileStylesApi(this: ApiClass, file_key: string): Promise<GetFileStylesResult>;
-export declare function getFileStylesStreamApi(this: ApiClass, file_key: string): Promise<AxiosResponse>;
 export declare function getStyleApi(this: ApiClass, 
 /** The unique identifier of the style */
 key: string): Promise<GetStyleResult>;

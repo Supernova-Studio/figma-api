@@ -32,7 +32,8 @@ export declare enum StrokeJoin {
 export declare enum ImageType {
     JPG = "JPG",
     PNG = "PNG",
-    SVG = "SVG"
+    SVG = "SVG",
+    PDF = "PDF"
 }
 /** A string enum with value, indicating the type of boolean operation applied */
 export declare enum BooleanOperationType {
@@ -60,7 +61,8 @@ export declare enum TextDecoration {
 export declare enum TextAutoResize {
     NONE = "NONE",
     HEIGHT = "HEIGHT",
-    WIDTH_AND_HEIGHT = "WIDTH_AND_HEIGHT"
+    WIDTH_AND_HEIGHT = "WIDTH_AND_HEIGHT",
+    TRUNCATE = "TRUNCATE"
 }
 /** The unit of the line height value specified by the user. */
 export declare enum LineHeightUnit {
@@ -79,7 +81,7 @@ export declare type StylesMap = {
 export declare type ExportSetting = {
     /** File suffix to append to all filenames */
     suffix: string;
-    /** Image type, string enum that supports values "JPG", "PNG", and "SVG" */
+    /** Image type, string enum that supports values "JPG", "PNG", "SVG" and "PDF" */
     format: ImageType;
     /** Constraint that determines sizing of exported asset */
     constraint: Constrain;
@@ -447,7 +449,7 @@ export declare type TypeStyle = {
     /** Text decoration applied to the node, default is `NONE` */
     textDecoration?: TextDecoration;
     /** Dimensions along which text will auto resize, default is that the text does not auto-resize. Default is `NONE` */
-    textAutoResize?: 'NONE' | 'HEIGHT' | 'WIDTH_AND_HEIGHT';
+    textAutoResize?: TextAutoResize;
     /** Horizontal text alignment as string enum */
     textAlignHorizontal: 'LEFT' | 'RIGHT' | 'CENTER' | 'JUSTIFIED';
     /** Vertical text alignment as string enum */
@@ -512,6 +514,15 @@ export interface Component {
     name: string;
     /** The description of the component as entered in the editor */
     description: string;
+    /** The ID of the component set if the component belongs to one  */
+    componentSetId: string | null;
+    /** The documentation links for this component */
+    documentationLinks: DocumentationLinks[];
+}
+/** Represents a link to documentation for a component. */
+export interface DocumentationLinks {
+    /** Should be a valid URI (e.g. https://www.figma.com). */
+    uri: string;
 }
 /** A set of properties that can be applied to nodes and published. Styles for a property can be created in the corresponding property's panel while editing a file */
 export interface Style {
@@ -528,9 +539,6 @@ export interface Style {
 export interface DOCUMENT {
     /** An array of canvases attached to the document */
     children: Node[];
-    pluginData: {
-        [pluginId: string]: any;
-    };
 }
 /** Represents a single page */
 export interface CANVAS {
@@ -553,32 +561,29 @@ export interface FRAME {
     background: Paint[];
     /** @deprecated Background color of the node. This is deprecated, as frames now support more than a solid color as a background. Please use the background field instead. */
     backgroundColor?: Color;
+    /** An array of fill paints applied to the node */
+    fills: Paint[];
+    /** An array of stroke paints applied to the node */
+    strokes: Paint[];
+    /** The weight of strokes on the node */
+    strokeWeight: number;
+    /** The weight of strokes on different side of the node */
+    individualStrokeWeights?: {
+        top: number;
+        right: number;
+        left: number;
+        bottom: number;
+    };
+    /** Position of stroke relative to vector outline, as a string enum */
+    strokeAlign: StrokeAlign;
+    /** Radius of each corner of the frame if a single radius is set for all corners */
+    cornerRadius: number;
+    /** Array of length 4 of the radius of each corner of the rectangle, starting in the top left and proceeding clockwise */
+    rectangleCornerRadii: [number, number, number, number];
     /** default: [] An array of export settings representing images to export from node */
     exportSettings: ExportSetting[];
     /** How this node blends with nodes behind it in the scene (see blend mode section for more details) */
     blendMode: BlendMode;
-    /** default: [] An array of fill paints applied to the node */
-    fills: Paint[];
-    /** default: [] An array of stroke paints applied to the node */
-    strokes: Paint[];
-    /** The weight of strokes on the node */
-    strokeWeight: number;
-    strokeCap?: StrokeCap;
-    /** Where stroke is drawn relative to the vector outline as a string enum
-    "INSIDE": draw stroke inside the shape boundary
-    "OUTSIDE": draw stroke outside the shape boundary
-    "CENTER": draw stroke centered along the shape boundary */
-    strokeAlign: StrokeAlign;
-    /** Radius of each corner of the rectangle */
-    cornerRadius: number;
-    /** Array of length 4 of the radius of each corner of the rectangle, starting in the top left and proceeding clockwise */
-    rectangleCornerRadii: [number, number, number, number];
-    /** A string enum with value of "MITER", "BEVEL", or "ROUND", describing how corners in vector paths are rendered. */
-    strokeJoin?: StrokeJoin;
-    /** An array of floating point numbers describing the pattern of dash length and gap lengths that the vector path follows. For example a value of [1, 2] indicates that the path has a dash of length 1 followed by a gap of length 2, repeated. */
-    strokeDashes?: number[];
-    /** Only valid if strokeJoin is "MITER". The corner angle, in degrees, below which strokeJoin will be set to "BEVEL" to avoid super sharp corners. By default this is 28.96 degrees. */
-    strokeMiterAngle?: number;
     /** default: false Keep height and width constrained to same ratio */
     preserveRatio: boolean;
     /** Horizontal and vertical layout constraints for node */
@@ -612,7 +617,7 @@ export interface FRAME {
     /** Determines how the auto-layout frame’s children should be aligned in the primary axis direction. This property is only applicable for auto-layout frames. Default MIN */
     primaryAxisAlignItems: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
     /** Determines how the auto-layout frame’s children should be aligned in the counter axis direction. This property is only applicable for auto-layout frames. Default MIN */
-    counterAxisAlignItems: 'MIN' | 'CENTER' | 'MAX';
+    counterAxisAlignItems: 'MIN' | 'CENTER' | 'MAX' | 'BASELINE';
     /** default: 0. The padding between the left border of the frame and its children. This property is only applicable for auto-layout frames. */
     paddingLeft: number;
     /** default: 0. The padding between the right border of the frame and its children. This property is only applicable for auto-layout frames. */
@@ -627,6 +632,10 @@ export interface FRAME {
     verticalPadding: number;
     /** default: 0. The distance between children of the frame. This property is only applicable for auto-layout frames. */
     itemSpacing: number;
+    /**default: false. Applicable only if layoutMode != "NONE". */
+    itemReverseZIndex: boolean;
+    /**default: false. Applicable only if layoutMode != "NONE". */
+    strokesIncludedInLayout: boolean;
     /** Defines the scrolling behavior of the frame, if there exist contents outside of the frame boundaries. The frame can either scroll vertically, horizontally, or in both directions to the extents of the content contained within it. This behavior can be observed in a prototype. Default NONE */
     overflowDirection: 'NONE' | 'HORIZONTAL_SCROLLING' | 'VERTICAL_SCROLLING' | 'HORIZONTAL_AND_VERTICAL_SCROLLING';
     /** default: [] An array of layout grids attached to this node (see layout grids section for more details). GROUP nodes do not have this attribute */
@@ -637,8 +646,8 @@ export interface FRAME {
     isMask: boolean;
     /** default: false Does this mask ignore fill style (like gradients) and effects? */
     isMaskOutline: boolean;
-    /** A mapping of a StyleType to style ID (see Style) of styles present on this node. The style ID can be used to look up more information about the style in the top-level styles field. */
-    styles?: StylesMap;
+    /** default: AUTO */
+    layoutPositioning: 'AUTO' | 'ABSOLUTE';
 }
 /** A logical grouping of nodes */
 export declare type GROUP = FRAME;
@@ -684,6 +693,13 @@ export interface VECTOR {
     strokes: Paint[];
     /** The weight of strokes on the node */
     strokeWeight: number;
+    /** The weight of strokes on different side of the node */
+    individualStrokeWeights?: {
+        top: number;
+        right: number;
+        left: number;
+        bottom: number;
+    };
     /** default: NONE. A string enum with value of "NONE", "ROUND", "SQUARE", "LINE_ARROW", or "TRIANGLE_ARROW", describing the end caps of vector paths. */
     strokeCap?: StrokeCap;
     /** Only specified if parameter geometry=paths is used. An array of paths representing the object stroke */
@@ -701,6 +717,8 @@ export interface VECTOR {
     strokeMiterAngle?: number;
     /** A mapping of a StyleType to style ID (see Style) of styles present on this node. The style ID can be used to look up more information about the style in the top-level styles field. */
     styles?: StylesMap;
+    /** default: AUTO */
+    layoutPositioning: 'AUTO' | 'ABSOLUTE';
 }
 /** A group that has a boolean operation applied to it */
 export declare type BOOLEAN = VECTOR & {
@@ -729,6 +747,12 @@ export declare type RECTANGLE = VECTOR & {
     /** Array of length 4 of the radius of each corner of the rectangle, starting in the top left and proceeding clockwise */
     rectangleCornerRadii: [number, number, number, number];
 };
+/** List types are represented as string enums with one of these possible values: ORDERED: Text is an ordered list (numbered), UNORDERED: Text is an unordered list (bulleted), NONE: Text is plain text and not part of any list */
+export declare enum LineTypes {
+    ORDERED = "ORDERED",
+    UNORDERED = "UNORDERED",
+    NONE = "NONE"
+}
 /** A text box */
 export declare type TEXT = VECTOR & {
     /** Text contained within text box */
@@ -741,6 +765,10 @@ export declare type TEXT = VECTOR & {
     styleOverrideTable: {
         [mapId: number]: TypeStyle;
     };
+    /** An array with the same number of elements as lines in the text node, where lines are delimited by newline or paragraph separator characters. Each element in the array corresponds to the list type of a specific line. */
+    lineTypes: LineTypes[];
+    /** An array with the same number of elements as lines in the text node, where lines are delimited by newline or paragraph separator characters. Each element in the array corresponds to the indentation level of a specific line. */
+    lineIndentations: number[];
 };
 /** A rectangular region of the canvas that can be exported */
 export interface SLICE {
@@ -805,6 +833,7 @@ export declare type Node<NType extends NodeType = NodeType> = {
     type: NType;
     pluginData: any;
     sharedPluginData: any;
+    isFixed?: boolean;
 } & NodeTypes[NType];
 export declare function isNodeType<NType extends NodeType, R = Node<NType>>(node: Node<any>, type: NType): node is R;
 export {};
