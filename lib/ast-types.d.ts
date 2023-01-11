@@ -400,7 +400,18 @@ export declare type Vector = {
     y: number;
 };
 /** A 2x3 2D affine transformation matrix */
-export declare type Transform = [[number, number, number], [number, number, number]];
+export declare type Transform = [
+    [
+        number,
+        number,
+        number
+    ],
+    [
+        number,
+        number,
+        number
+    ]
+];
 export declare enum PathWindingRule {
     EVENODD = "EVENODD",
     NONZERO = "NONZERO"
